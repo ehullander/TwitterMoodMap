@@ -1,13 +1,11 @@
-require('rJava')
-require('NLP')
-require('openNLP')
+
 require('RJSONIO')
 require("googleVis")
 
 #Reads JSON data and Dictionary files
 f=file("output10.txt","r")
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")
-AFINN=mydata <- read.table("AFINN-111.txt", header=FALSE, sep="\t",  quote='', comment='',colClasses = c("character", "numeric"))
+AFINN <- read.table("AFINN-111.txt", header=FALSE, sep="\t",  quote='', comment='',colClasses = c("character", "numeric"))
 tweets<-data.frame()
 linn<-readLines(f)
 JSON<-0
@@ -29,36 +27,37 @@ for (i in 1:length(linn))
 }
 close(f)
 
-##tokenizing function.  Call this on tweets[j,1]
-#returns a dataframe with bag of words and POS
+#joins state info with tweet info
+test<-merge(statedata,tweets,by.x='CityState', by.y='V2')
 
-
-#Takes dataframe returned by note
-#assigns sentiment score to each word
-sentiment<-function(s)
+#Tokenizes a string of text
+#merges with the sentiment dictionary AFINN
+#Sums the sentiment of the text, and returns
+sentiment<-function(text)
 {
+  s<-data.frame(strsplit(text," "))
   names(s)='words'
-  merge(s, AFINN, by.x='words',by.y='V1', all.x=TRUE)
+  x<-merge(s, AFINN, by.x='words',by.y='V1', all.x=TRUE)
+  sum(x$V2, na.rm=TRUE)
 }
 
+#build data frame with scores of each tweet.  Could use tapply here
 mysent<-0
 mysent<-data.frame()
 for(i in 1:length(tweets[,1]))
 {
-  #tokenize the tweet
-  #mynote<-note(tweets[i,1])
-  s<-data.frame(strsplit(tweets[i,1]," "))
-  #sentiment score the tweet
-  DMA<-statedata[statedata$CityState%in%tweets$V2[i],11]
-  Region<-statedata[statedata$CityState%in%tweets$V2[i],10]
-  sentstate<-data.frame(sentiment(s),tweets[i,2], DMA[1], Region[1])
+
+  sentstate<-data.frame(text=tweets[i,1],score=sentiment(tweets[i,1]),DMA=test$DMA.Region.Code[i])
   mysent<-rbind(mysent, sentstate)
-  #print(data.frame(mysent,tweets[i,2]))
-  
+
 }
 
-sentscores<-data.frame(with(mysent, tapply(V2, DMA.1., sum, na.rm=TRUE, row.names=NULL, simplify=FALSE)))
-df<-data.frame(DMA=as.numeric(row.names(sentscores)),scores=as.numeric(sentscores[,1]))
+df<-with(mysent, tapply(score, DMA, sum, na.rm=TRUE, row.names=NULL, simplify=FALSE))
+df<-data.frame(DMA=as.numeric(row.names(df)),scores=as.numeric(df))
+DMAs<-unique(data.frame(Region=statedata$DMA.Region,DMA=as.numeric(statedata$DMA.Region.Code)))
+df<-merge(df,DMAs,by.x='DMA',by.y='DMA')
+
+#Google Intensity plot
 Intensity1 <- gvisGeoChart(df, "DMA", "scores",
                            options=list(region="US", displayMode="regions", 
                                         resolution="metros", colors="['#0033CC','#999999','#FFFF00']"))
