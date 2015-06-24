@@ -3,7 +3,9 @@ require('RJSONIO')
 require("googleVis")
 
 #Reads JSON data and Dictionary files
-f=file("output10.txt","r")
+filename<-"output10.txt"
+f=file(filename)
+date<-file.mtime(filename)
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")
 AFINN <- read.table("AFINN-111.txt", header=FALSE, sep="\t",  quote='', comment='',colClasses = c("character", "numeric"))
 tweets<-data.frame()
@@ -56,9 +58,12 @@ df<-with(mysent, tapply(score, DMA, sum, na.rm=TRUE, row.names=NULL, simplify=FA
 df<-data.frame(DMA=as.numeric(row.names(df)),scores=as.numeric(df))
 DMAs<-unique(data.frame(Region=statedata$DMA.Region,DMA=as.numeric(statedata$DMA.Region.Code)))
 df<-merge(df,DMAs,by.x='DMA',by.y='DMA')
-
+df<-rbind(c(1000,100),df)
+df<-rbind(c(1000,-100),df)
+df<-cbind(df,date)
 #Google Intensity plot
-Intensity1 <- gvisGeoChart(df, "DMA", "scores",
+Intensity1 <- gvisGeoChart(df, "DMA", "scores", hovervar = "Region",
                            options=list(region="US", displayMode="regions", 
                                         resolution="metros", colors="['#0033CC','#999999','#FFFF00']"))
+
 plot(Intensity1)
