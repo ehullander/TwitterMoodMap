@@ -4,12 +4,12 @@ require("googleVis")
 
 
 #Reads JSON data and Dictionary files
-filename<-"output14.txt"
+filename<-"output12.txt"
 f=file(filename)
 date<-file.mtime(filename)
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")
 AFINN <- read.table("AFINN-111.txt", header=FALSE, sep="\t",  quote='', comment='',colClasses = c("character", "numeric"))
-
+AFINN[,2]<-as.integer(AFINN[,2])
 tweets<-data.frame()
 linn<-readLines(f)
 JSON<-0
@@ -38,34 +38,40 @@ close(f)
 sentiment<-function(text)
 {
   s<-data.frame(strsplit(text," "))
-  names(s)='words'
-  x<-merge(s, AFINN, by.x='words',by.y='V1', all.x=FALSE)
+  x<-merge(s, AFINN, by.x=names(s),by.y='V1', all.x=FALSE)
   sum(x$V2, na.rm=TRUE)
 }
 
-tweets$scores<-as.numeric(lapply(tweets[,'V1'],sentiment))
+tweets$scores<-vapply(tweets[,'V1'],sentiment, FUN.VALUE=integer(1))
 tweets<-merge(statedata,tweets,by.x='CityState', by.y='V2')
 DMAs<-unique(data.frame(Region=statedata$DMA.Region,DMA=as.numeric(statedata$DMA.Region.Code)))
 
 tweets$ones<-1
 df<-with(tweets, tapply(scores, DMA.Region.Code, mean, na.rm=TRUE, row.names=NULL, simplify=FALSE))
 dt<-with(tweets, tapply(scores, DMA.Region.Code, sd, na.rm=TRUE,  simplify=FALSE))
-df<-data.frame(DMA=as.numeric(row.names(df)),scores=as.numeric(df), sd=as.numeric(dt))
+dx<-with(tweets, tapply(ones, DMA.Region.Code, sum, na.rm=TRUE,  simplify=FALSE))
+df<-data.frame(DMA=as.numeric(row.names(df)),scores=as.numeric(df), sd=as.numeric(dt), count=as.numeric(dx))
 df<-merge(df,DMAs,by.x='DMA',by.y='DMA')
+maxscore<-max(df$scores)
+df$scores<-round(df$scores/maxscore,2)
+df$sd<-round(df$sd/maxscore,2)
+
+
 #df<-rbind(c(1000,-3),df)
 #df<-rbind(c(1000,3),df)
 df<-cbind(df,date)
 
 
-write.table(df,"tweetscores.csv", append=TRUE, sep=",", col.names=NA)
+write.table(df,"tweetscores2.csv", append=TRUE, sep=",", col.names=NA)
 #Google Intensity plot
+
 Intensity1 <- gvisGeoChart(df, "DMA", "scores", hovervar = "Region",
                            options=list(region="US", displayMode="regions", 
                                         resolution="metros", colors="['#0033CC','#999999','#FFFF00']"))
 
 plot(Intensity1)
 
-Intensity2 <- gvisGeoChart(df, "DMA", "sd", hovervar = "Region",
+Intensity2 <- gvisGeoChart(df, "DMA", "count", hovervar = "Region",
                            options=list(region="US", displayMode="regions", 
                                         resolution="metros", colors="['#FFFFFF','#000000']"))
 
