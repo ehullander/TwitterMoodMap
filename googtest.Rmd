@@ -1,10 +1,19 @@
 #Mood Map of the United States
 ##Beta
 ####Eric Hullander 2015
-"Hello, America, How are ya?""
-Using the Twitter API, a random sample of 50,000k twitter tweets are collected daily.  The mood of each tweet is estimated using the AFINN-111.txt dictionary.  You can read about it 
-<a href="https://github.com/uwescience/datasci_course_materials/blob/master/assignment1/AFINN-README.txt">here.</a>  The results are then plotted on a map of the US.  This is for entertainment, but there may be some value.  You can see how
+#"Hello, America, How are ya?""
+An attempt is made to map the mood of the lower 48.  Using the Twitter API, a random sample of 50,000k twitter tweets are 
+collected daily.  The mood of each tweet is estimated using the <a href="https://github.com/uwescience/datasci_course_materials/blob/master/assignment1/AFINN-README.txt">AFINN-111.txt</a> dictionary.  Much of this project builds on a 
+course project offered through by Bill Howe of the University of Washington through <a href="https://www.coursera.org/course/datasci">Coursera</a>.
+My contribution is in the visualization.  I wanted to see a mood map like a weather map, so I can make better travel plans.  
 
+More to come.  But this week see how Charleston stays kind of blue, and how everything brightens on Saturday.  Maybe it's pride?  Maybe it's meaningless?  
+
+If you're feeling nerdy, <a href="https://github.com/ehullander/Twitterstream">"How I Did It"</a>
+
+####Mood Map
+#####Blue=sad
+#####Yellow=Happy
 
 ```{r setOptions, message=FALSE, echo=FALSE}
 
@@ -19,7 +28,6 @@ dates<-unique(as.character(DF$date))
 
 #Google Intensity plot
 ```
-####Mood Date
 ```{r ComboExample1, results='asis', tidy=FALSE, echo=FALSE}
 for (n in 1:length(dates))
   {
@@ -33,9 +41,9 @@ for (n in 1:length(dates))
   plot(Intensity1)
   }
 ```
-####Mood Map
-#####Blue=sad
-#####Yellow=Happy
+####Tweet Density
+#####Black=More Tweets
+#####White=Less Tweets
 ```{r ComboExample2, results='asis', tidy=FALSE, echo=FALSE}
 for (n in 1:length(dates))
   {
@@ -48,6 +56,4 @@ for (n in 1:length(dates))
   plot(Intensity2)
   }
 ```
-####Tweet Density
-#####Black=More Tweets
-#####White=Less Tweets
+
