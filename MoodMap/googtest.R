@@ -4,7 +4,7 @@ require("googleVis")
 
 
 #Reads JSON data and Dictionary files
-filename<-"output16.txt"
+filename<-"output17.txt"
 f=file(filename)
 date<-file.mtime(filename)
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")

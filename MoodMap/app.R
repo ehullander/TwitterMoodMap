@@ -71,6 +71,7 @@ server <- function(input, output) {
                               options=list(region=st(), displayMode="regions", 
                                           resolution="metros", 
                                           colorAxis="{minValue:'-1.5', maxValue:'1.5'}",
+                                          
                                           colors="['#0033CC','#999999','#FFFF00']"))
                             })
   
@@ -78,3 +79,4 @@ server <- function(input, output) {
   
 }
 shinyApp(ui = ui, server = server)
+#shinyapps::deployApp()
