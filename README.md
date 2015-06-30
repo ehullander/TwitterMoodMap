@@ -4,4 +4,3 @@ An attempt is made to make a <a href="https://ehullander.shinyapps.io/MoodMap">M
 course project offered through by Bill Howe of the University of Washington through <a href="https://www.coursera.org/course/datasci">Coursera</a>.
 My contribution is in figuring out how to get the data on a map, and wrap the whole thing in a Shiny App
 
-<iframe src="https://ehullander.shinyapps.io/MoodMap"></iframe>
