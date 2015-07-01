@@ -1,4 +1,5 @@
 import tweepy
+import sys
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -8,7 +9,7 @@ access_token =  "893920530-48B8jawsRQ6vtQwXygSnYizF7s4xXpu0fcIcwQni"
 access_token_secret = "1jGpacXsU94KVibBXbIAsDIfXFLg1Rf6WELNOfTuFYBM4"
 consumer_key = "IXbJQnvb801OIel741LqPEL4q"
 consumer_secret = "dmqUVhpnLh4XcXDMT8na0Ql61KGaDRvLXAyIiHBadu1EsCHCj1"
-
+qty = int(sys.argv[1])
 
 #This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
@@ -20,7 +21,7 @@ class StdOutListener(StreamListener):
             StdOutListener.tweetCounter=StdOutListener.tweetCounter+1
             try:
                 print data   
-                if  StdOutListener.tweetCounter < 100000:
+                if  StdOutListener.tweetCounter < qty:
                     return True
                 else:
                     return False

@@ -4,24 +4,25 @@ require("googleVis")
 
 
 #Reads JSON data and Dictionary files
-filename<-"output18.txt"
-f=file(filename)
-date<-file.mtime(filename)
+
+f<-system('python twitter.py', intern=TRUE)
+#f=file(filename)
+date<-date()
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")
 AFINN <- read.table("AFINN-111.txt", header=FALSE, sep="\t",  quote='', comment='',colClasses = c("character", "numeric"))
 AFINN[,2]<-as.integer(AFINN[,2])
 tweets<-data.frame()
-linn<-readLines(f)
+#linn<-readLines(f)
 JSON<-0
 j=0
-L=length(linn)
+L=length(f)
 for (i in 1:L)
 {
-  if (isValidJSON(I(linn[i]))==TRUE)
+  if (isValidJSON(I(f[i]))==TRUE)
   {
     j=j+1
     
-    JSON<-fromJSON(linn[i])
+    JSON<-fromJSON(f[i])
     if(!is.null(JSON$text)&!is.null(JSON$place$full_name))
     {
     tweets[j,1]<-JSON$text
@@ -30,7 +31,7 @@ for (i in 1:L)
   }
   
 }
-close(f)
+#close(f)
 
 #Tokenizes a string of text
 #merges with the sentiment dictionary AFINN
@@ -62,7 +63,7 @@ df$sd<-round(df$sd,2)
 df<-cbind(df,date)
 
 
-write.table(df,"tweetscores.csv", append=TRUE, sep=",", col.names=NA)
+write.table(df,"tempscores.csv", append=TRUE, sep=",", col.names=NA)
 #Google Intensity plot
 
 Intensity1 <- gvisGeoChart(df, "DMA", "scores", hovervar = "Region",
