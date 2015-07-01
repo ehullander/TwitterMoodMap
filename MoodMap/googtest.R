@@ -4,7 +4,7 @@ require("googleVis")
 
 
 #Reads JSON data and Dictionary files
-filename<-"output17.txt"
+filename<-"output18.txt"
 f=file(filename)
 date<-file.mtime(filename)
 statedata <- read.csv("statepopDMA.csv", colClasses = "character")
@@ -62,7 +62,7 @@ df$sd<-round(df$sd,2)
 df<-cbind(df,date)
 
 
-write.table(df,"tweetscores2.csv", append=TRUE, sep=",", col.names=NA)
+write.table(df,"tweetscores.csv", append=TRUE, sep=",", col.names=NA)
 #Google Intensity plot
 
 Intensity1 <- gvisGeoChart(df, "DMA", "scores", hovervar = "Region",
