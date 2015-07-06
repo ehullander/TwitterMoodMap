@@ -1,7 +1,7 @@
 
 library(shiny)
 require("googleVis")
-
+####use sql here to import the date.
 DF <- read.csv("tweetscores.csv", colClasses = "character")
 DF<-DF[DF$X!="",]
 DF$date<-as.Date(DF$date, "%m/%d/%Y %H:%M")
